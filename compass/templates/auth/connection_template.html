@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel = 'stylesheet' href = 'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css'>
+<script src = 'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js'></script>
+<link href = 'https://fonts.googleapis.com/icon?family=Material+Icons' rel = 'stylesheet'>
+
+<link rel="stylesheet" href="https://use.typekit.net/rzr6kwp.css">
+
+
+<script src = "https://www.jsdelivr.com/package/npm/chart.js?path=dist"></script>
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
+
+<script src="https://use.typekit.net/rzr6kwp.js"></script>
+<script>try{Typekit.load({ async: true });}catch(e){}</script>
+
+<link rel="stylesheet" href="static/css/avenir.css">
+
+<style>
+    body {
+        font-family: AvenirNextLTW01-Medium;
+    }
+
+    #login-card {
+        width: 60%;
+        height: 80%;
+
+        border-radius: 8px;
+
+      
+        margin-left: 20%;
+      
+    }
+
+    .width-100 {
+        width: 100%;
+    }
+
+    .height {
+        height: 100%; 
+    }
+
+    .page {
+        width: 100%; height: 100%;
+    }
+
+    .fill-input {
+        font-weight: 300 !important;
+        color: white !important;
+        border-color:rgba(80, 108, 199, 0.686) !important;
+        border-style: none !important;
+        border-width: 2px !important; 
+
+        background: #527aff !important;
+    
+        border-radius: 8px !important; 
+        padding: 10px 15px 10px 15px !important;
+
+        outline-style: none !important;
+        box-shadow: none !important;
+
+        margin-bottom: 0px !important;
+
+        width: 70% !important;
+        margin-left: 15% !important;
+
+        height: 200px !important;
+
+    }
+
+    .fill-input:focus {
+        /*box-shadow: 0 16px 24px 2px rgba(0,0,0,0.14), 0 6px 30px 5px rgba(0,0,0,0.12), 0 8px 10px -5px rgba(0,0,0,0.3) !important;*/
+    }
+</style>
+
+<!--
+    mongodb://admin:%s@recordbookcluster0-shard-00-00-l24me.mongodb.net:27017,recordbookcluster0-shard-00-01-l24me.mongodb.net:27017,recordbookcluster0-shard-00-02-l24me.mongodb.net:27017/test?ssl=true&replicaSet=RecordBookCluster0-shard-0&authSource=admin
+-->
+
+<html class = 'page' style = 'width: 100%; height: 100%'>
+    <body class = 'page'>
+        <div style = 'width: 100%; height: 100%; padding: 50px'>
+            <div style = 'font-weight: 300; font-size: 70px; text-align: center'>Connect to MongoDB</div>
+            <div id = 'login-card-wrapper' class = 'page valign-wrapper'>
+                <div id = 'login-card' class = ''>
+                    <span style = 'margin-left: 15%; font-weight: 700'>Connection String</span>
+                    <br/>
+                    <form id = 'connect-form' method = 'post' action = '/connect'>
+                        <textarea name = 'connection-string' autocomplete="off" autocorrect="off" autocapitalize="off"
+                        spellcheck="false" class = 'fill-input'></textarea>
+                        <br/><br/>
+                        <span id = 'connect-button' style = 'margin-left: 15%; font-weight: 700; cursor: pointer; padding: 10px 25px 10px 25px; border-radius: 8px; background: #3db876; color: white'>
+                            Connect
+                        </span>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
+<script>
+    $('#connect-button').click(function(){
+        $('#connect-form')[0].submit();
+    })
+</script>

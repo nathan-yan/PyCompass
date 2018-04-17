@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel = 'stylesheet' href = 'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css'>
+<script src = 'https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js'></script>
+<link href = 'https://fonts.googleapis.com/icon?family=Material+Icons' rel = 'stylesheet'>
+
+<link rel="stylesheet" href="https://use.typekit.net/rzr6kwp.css">
+
+
+<script src = "https://www.jsdelivr.com/package/npm/chart.js?path=dist"></script>
+<script src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
+
+<script src="https://use.typekit.net/rzr6kwp.js"></script>
+<script>try{Typekit.load({ async: true });}catch(e){}</script>
+
+<link rel="stylesheet" href="../static/css/avenir.css">
+
+<style>
+    body {
+        font-family: AvenirNextLTW01-Medium;
+    }
+
+    #collection-card {
+        width: 300px;
+        position: fixed; 
+
+top: 150px;
+left: 0; 
+
+padding: 30px; 
+    }
+
+    .width-100 {
+        width: 100%;
+    }
+
+    .height {
+        height: 100%; 
+    }
+
+    .page {
+        width: 100%; height: 100%;
+    }
+
+    .fill-input {
+        font-weight: 300 !important;
+        color: white !important;
+        border-color:rgba(80, 108, 199, 0.686) !important;
+        border-style: none !important;
+        border-width: 2px !important; 
+
+        background: #527aff !important;
+    
+        border-radius: 8px !important; 
+        padding: 10px 15px 10px 15px !important;
+
+        outline-style: none !important;
+        box-shadow: none !important;
+
+        margin-bottom: 0px !important;
+
+        width: 70% !important;
+        margin-left: 15% !important;
+
+        height: 200px !important;
+
+    }
+
+    .fill-input:focus {
+        /*box-shadow: 0 16px 24px 2px rgba(0,0,0,0.14), 0 6px 30px 5px rgba(0,0,0,0.12), 0 8px 10px -5px rgba(0,0,0,0.3) !important;*/
+    }
+
+    .db-name {
+        font-size: 40px;
+        font-weight: 700;
+    }
+
+    .db {
+        display: flex;
+        width: 100%;
+
+        min-height: 100px;
+
+        border-radius: 8px; 
+        background: #2222b6;
+
+        margin-bottom: 20px;
+        padding: 20px;
+
+        color: white;
+    }
+
+    .db:hover {
+        background: #1212a6;
+    }
+
+    .db-name {
+        width: 50%;
+        height: 100%;
+    }
+
+    .db-collections {
+        display: flex;
+        flex-wrap: wrap;
+        width: 50%;
+
+            flex-direction: row-reverse;
+    }
+
+    .db-collection {
+        height: fit-content; 
+
+        padding: 10px 45px 10px 15px;
+        border-radius: 5px;
+
+        background: #219b72;
+        color: white; 
+        margin-right: 10px;
+        margin-bottom: 10px;
+
+        font-size: 17px; 
+
+        cursor: pointer;
+        width: fit-content; 
+    }
+
+    .db-collection:hover {
+        background: #118b62;
+    }
+
+    .key {
+        font-family: Monospace;
+        font-weight: 700;
+
+        font-size: 12px;
+    }
+
+    .data {
+        font-family: Monospace;
+        font-weight: 300;
+
+        font-size: 12px;
+
+        padding-left: 30px;
+    }
+
+    .data-inline {
+        padding-left: 5px;
+    }
+
+    .document {
+        padding: 20px;
+        background: white;
+
+        border-radius: 8px;
+    }
+
+    .data-string {
+        color: #4a60df;
+    }
+
+    .data-bool {
+        color: #741d74;
+    }
+
+    .data-number {
+        color: #f38a28;
+    }
+
+    .data-object {
+        padding: 3px 5px 3px 5px;
+
+        background: #44cd55;
+        color: white;
+
+        border-radius: 3px;
+    }
+
+    .data-array {
+        padding: 3px 5px 3px 5px;
+
+        background: #448fcd;
+        color: white;
+
+        border-radius: 3px;
+    }
+    
+
+    .data-in-object {
+        padding: 10px;
+        margin-left: 30px;
+
+        border-radius: 8px; 
+
+        background: #3a3ad411;
+
+        width: fit-content;
+    } 
+
+    .document {
+        margin-bottom: 20px;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .selected-collection {
+        background: #31d69f
+    }
+</style>
+
+<!--
+    mongodb://admin:%s@recordbookcluster0-shard-00-00-l24me.mongodb.net:27017,recordbookcluster0-shard-00-01-l24me.mongodb.net:27017,recordbookcluster0-shard-00-02-l24me.mongodb.net:27017/test?ssl=true&replicaSet=RecordBookCluster0-shard-0&authSource=admin
+-->
+
+<html class = 'page' style = 'width: 100%; height: 100%; background: #f5f5f5'>
+    <body class = 'page'>
+        <div style = 'width: 100%; height: 100%; padding: 50px'>
+            <div style = 'font-weight: 300; font-size: 70px; margin-left: 20%'>{{name}}.<span style = 'font-size: 50px'>{{collection_name}}</span></div>
+            <div id = '' class = 'width-100'>
+                <div id = 'collection-card' class = ''>
+                    {% for collection in collections %}    
+                        {% if collection == collection_name %}
+                            <div class = 'db-collection selected-collection'>{{collection}}</div>
+                        {% else %}
+                            <div class = 'db-collection'>{{collection}}</div>
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+
+                <div class = 'documents' id = 'documents'>
+
+                </div>
+                
+            </div>
+        </div>
+
+        <form id = 'view-form' action = '/db' method = 'get'>
+        </form>
+
+    </body>
+</html>
+
+<script>
+    var collections = $('.db-collection');
+
+    for (var i = 0; i < collections.length; i++){
+        $(collections[i]).click(function(){
+            window.location.href = location.protocol + '//' + location.host + location.pathname + "?collection=" + $(this).html();
+                
+        })
+    }
+
+    var id = 0;
+
+
+    function parseObject(parent, data){
+        console.log(id);
+        for (var key in data) {
+            console.log(key + " " + data[key]);
+            if (typeof data[key] == "object" && !Array.isArray(data[key])){
+                var recursive_element = $(`<div>
+                                                <div class = 'key' style = 'margin-bottom: 5px;'>${key} : <span class = 'data-object' id = 'activates-${id + 1}'>Object</span></div>
+                                                <div class = 'data data-in-object hidden' style = 'margin-bottom: 5px' id = data-${id + 1}></div>
+                                           </div>`);
+                
+                $(parent.find(".data")[0]).append(
+                    recursive_element
+                );
+
+                $('#activates-' + (id + 1)).click(function(){
+                    var object_id = $(this).attr('id').split('-').slice(-1)[0];
+                    console.log(object_id);
+                    var object = $('#data-' + object_id);
+
+                    if (object.hasClass('hidden')){
+                        object.removeClass('hidden');
+                    }else{
+                        object.addClass('hidden');
+                    }
+                })
+                
+                id += 1;
+                parseObject(recursive_element, data[key], id);
+            }else if (Array.isArray(data[key])){
+                var array_element = $(`<div>
+                                                <div class = 'key' style = 'margin-bottom: 5px;'>${key} : <span class = 'data-array' id = 'activates-${id + 1}'>Array (${data[key].length})</span></div>
+                                                <div class = 'data data-in-object hidden' style = 'margin-bottom: 5px' id = data-${id + 1}></div>
+                                           </div>`);
+                
+                $(parent.find(".data")[0]).append(
+                    array_element
+                );
+
+                $('#activates-' + (id + 1)).click(function(){
+                    var object_id = $(this).attr('id').split('-').slice(-1)[0];
+                    console.log(object_id);
+                    var object = $('#data-' + object_id);
+
+                    if (object.hasClass('hidden')){
+                        object.removeClass('hidden');
+                    }else{
+                        object.addClass('hidden');
+                    }
+                })
+
+                id += 1
+
+                parseObject(array_element, data[key], id);
+
+            }else {
+                var class_type;
+                var quotes = true;
+                if (typeof data[key] == 'string'){
+                    class_type = 'data-string';
+                }else if (typeof data[key] == 'boolean'){
+                    class_type = 'data-bool';
+                    quotes = false;
+                }else if (typeof data[key] == 'number'){
+                    class_type = 'data-number';
+                    quotes = false;
+                }
+
+                
+                if (quotes){
+                    var data_element = $(`<div>
+                                        <div class = 'key'>${key} : <span class = 'data data-inline ${class_type}' id = data-${id + 1}>"${data[key]}"</span></div>
+                                    </div>`);
+                }else{
+                    var data_element = $(`<div>
+                                        <div class = 'key'>${key} : <span class = 'data data-inline ${class_type}' id = data-${id + 1}>${data[key]}</span></div>
+                                    </div>`);
+                }
+                
+                id += 1;
+
+                $(parent.find(".data")[0]).append(
+                    data_element
+                );
+            }
+        } 
+    }
+
+    var document_ = {{documents|safe}};
+
+    if (!document_ == ) {
+        $('#documents').html("Nothing to show");
+    }
+
+    function display_collection(document_){
+        $('#documents').html("");
+        //document_ = [{"nest1" : {"nest21" : "test", "nest22" : "test!", 'nest' : {'nest' : {'hest' : {'tets' : {'ting' : 3}}}}}, "hello" : "world"}]
+        var doc = 0;
+        id = 0;
+        for (var i = 0; i < document_.length; i++){
+            var document_element = $(`<div style = 'width: calc(100% - 320px); margin-left: 250px; height: 100%' class = 'document' id = 'parent-${i}'>
+                <div class = 'key'></div>
+                <div class = 'data' id = 'data-${id}'></div>
+            </div>`);
+
+            $('#documents').append(document_element);
+
+            parseObject($('#parent-' + i), document_[i]);
+
+        }
+    }
+
+    display_collection(document_);
+</script>
