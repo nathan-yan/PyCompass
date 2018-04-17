@@ -25,7 +25,7 @@
         width: 300px;
         position: fixed; 
 
-top: 150px;
+top: 50px;
 left: 0; 
 
 padding: 30px; 
@@ -50,7 +50,7 @@ padding: 30px;
         border-style: none !important;
         border-width: 2px !important; 
 
-        background: #527aff !important;
+        background: #ddd !important;
     
         border-radius: 8px !important; 
         padding: 10px 15px 10px 15px !important;
@@ -60,15 +60,18 @@ padding: 30px;
 
         margin-bottom: 0px !important;
 
-        width: 70% !important;
-        margin-left: 15% !important;
+        width: 50% !important;
 
-        height: 200px !important;
+        height: 23px !important;
 
     }
 
     .fill-input:focus {
         /*box-shadow: 0 16px 24px 2px rgba(0,0,0,0.14), 0 6px 30px 5px rgba(0,0,0,0.12), 0 8px 10px -5px rgba(0,0,0,0.3) !important;*/
+    }
+
+    ::placeholder { /* Most modern browsers support this now. */
+        color:    #40405f;
     }
 
     .db-name {
@@ -207,7 +210,29 @@ padding: 30px;
     }
 
     .selected-collection {
-        background: #31d69f
+        background: #aaa;
+    }
+
+    .button {
+        padding: 10px 25px 10px 25px;
+        border-radius: 8px;
+
+        width: fit-content; 
+        color: white;
+
+        font-weight: 700;
+        margin-right: 15px;
+    }
+
+    #actions {
+        display: flex;
+    }
+
+    .search-bar {
+        width: 500px;
+
+        border-radius: 8px;
+        background: #ddd; 
     }
 </style>
 
@@ -219,8 +244,20 @@ padding: 30px;
     <body class = 'page'>
         <div style = 'width: 100%; height: 100%; padding: 50px'>
             <div style = 'font-weight: 300; font-size: 70px; margin-left: 20%'>{{name}}.<span style = 'font-size: 50px'>{{collection_name}}</span></div>
-            <div id = '' class = 'width-100'>
+            <div style = 'margin-left: 20%;' id = 'actions'>
+                <div class = 'button' style = 'background: #22d49f'>Insert Document</div>
+                <div class = 'button' style = 'background: #22aad4'><i class = 'material-icons' style = 'font-size: 20px; vertical-align: middle'>refresh</i></div>
+                <input class = 'fill-input' id = 'search' placeholder = 'filter {field : value}'></input>
+            </div>
+
+            <br/>
+
+            <div id = '' class = 'page'>
                 <div id = 'collection-card' class = ''>
+                    <a style = 'color: white'  href = '/connect'>
+                        <div class = 'db-collection' style = 'background: #1212a6'>Return to Databases</div>
+                    </a>
+                    <br/>
                     {% for collection in collections %}    
                         {% if collection == collection_name %}
                             <div class = 'db-collection selected-collection'>{{collection}}</div>
@@ -231,7 +268,7 @@ padding: 30px;
 
                 </div>
 
-                <div class = 'documents' id = 'documents'>
+                <div class = 'documents' style = 'margin-left: 25px' id = 'documents'>
 
                 </div>
                 
@@ -346,9 +383,13 @@ padding: 30px;
 
     var document_ = {{documents|safe}};
 
-    if (!document_ == ) {
-        $('#documents').html("Nothing to show");
-    }
+    $(document).ready(function(){
+        if (!document_) {
+            console.log('set');
+            $('#documents').css('height', '100%');
+            $('#documents').html(`<div style = 'width: calc(100% - 320px); height: 50%; background: white; margin-left: 280px; border-radius: 10px; font-size: 30px' class = 'valign-wrapper'><div style = 'width: 100%; text-align: center; color: #ddd'>nothing to show</div></div>`);
+        }
+    })
 
     function display_collection(document_){
         $('#documents').html("");

@@ -158,13 +158,30 @@
 </html>
 
 <script>
-    var dbs = $('.db');
-    console.log(dbs.length);
-    for (var i = 0; i < dbs.length; i++){
-        $(dbs[i]).click(function(){
-            console.log($(this).children()[0]);
-            $('#view-form').attr('action', '/db/' + $(this).children()[0].innerHTML);
-            $('#view-form')[0].submit();
-        })
-    }
+    $(document).ready(function(){
+            var collections = $('.db-collection');
+
+        for (var i = 0; i < collections.length; i++){
+            $(collections[i]).click(function(e){
+                var parent = $(this).parent().parent();
+                var db = parent.find(".db-name").html();
+
+                e.stopPropagation();
+
+                window.location.href =  "/db/" + db + "?collection=" + $(this).html();
+
+            })
+        }
+
+            var dbs = $('.db');
+            console.log(dbs.length);
+            for (var i = 0; i < dbs.length; i++){
+                $(dbs[i]).click(function(){
+                    console.log($(this).children()[0]);
+                    $('#view-form').attr('action', '/db/' + $(this).children()[0].innerHTML);
+                    $('#view-form')[0].submit();
+                })
+            }
+
+   })     
 </script>
