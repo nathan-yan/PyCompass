@@ -4,4 +4,4 @@ import compass.views.home as home
 application = home.application
 
 if __name__ == "__main__":
-    application.run(host = '10.104.38.217', debug = True)
+    application.run(host = '192.168.1.27', debug = True)

@@ -268,7 +268,7 @@ padding: 30px;
 
     .data-type {
         font-size: 10px;
-        padding: 2px 5px 2px 5px;
+        padding: 1px 5px 1px 5px;
         background: #8e53ec;
 
         border-radius: 4px;
@@ -277,6 +277,14 @@ padding: 30px;
         font-weight: 700;
 
         margin-left: 15px;
+    
+        width: fit-content;
+        display: inline-block;
+    }
+
+    .data-type-change:hover {
+    cursor: pointer;
+    text-decoration: underline; 
     }
 </style>
 
@@ -372,8 +380,25 @@ padding: 30px;
                 parseObject(recursive_element, data[key], id);
             }else if (Array.isArray(data[key])){
                 var array_element = $(`<div>
-                                                <div style = 'margin-bottom: 5px;'><span class = 'key'>${key}</span> : <span class = 'data-array' id = 'activates-${id + 1}'>Array (${data[key].length})</span></div>
-                                                <div class = 'data data-in-object hidden' style = 'margin-bottom: 5px' id = data-${id + 1}></div>
+                                                <div style = 'position: relative; margin-top: 2px; margin-bottom: 5px;'><span class = 'key'>${key}</span> : <span class = 'data-array' id = 'activates-${id + 1}'>Array (${data[key].length})</span>
+                                                
+                                                <div class="data-type" style = 'position: absolute;top:0; right: calc(100% + 20px)' id="data-type-${id + 1}">
+            Array
+        </div>
+
+        <div class="hidden" hidden_ = 'true' style = 'text-align: right; position: absolute; top:22; right: calc(100% + 20px); background: #5655ffcc; border-radius: 5px; padding: 5px; padding-left: 15px; z-index: 100000; color: white' id = data-types-${id + 1}>
+            <div id = 'type-string-${id + 1}' class = 'data-type-change'>String</div>
+            <div id = 'type-intdoub-${id + 1}' class = 'data-type-change'>Integer/Double</div>
+            <div id = 'type-boolean-${id + 1}' class = 'data-type-change'>Boolean</div>
+            <div id = 'type-array-${id + 1}' class = 'data-type-change'>Array</div>
+            <div id = 'type-timestamp-${id + 1}' class = 'data-type-change'>Timestamp</div>
+            <div id = 'type-date-${id + 1}' class = 'data-type-change'>Date</div>
+            <div id = 'type-objectid-${id + 1}' class = 'data-type-change'>Object ID</div>
+        </div>
+                                                </div>
+                                                <div class = 'data data-in-object hidden' style = 'margin-bottom: 5px' id = data-${id + 1}>
+                                                
+                                                </div>
                                            </div>`);
                 
                 $(parent.find(".data")[0]).append(
@@ -411,9 +436,31 @@ padding: 30px;
 
                 
                 if (quotes){
-                    var data_element = $(`<div>
-                                        <div><span class = 'key'>${key}</span> : <span class = 'data data-inline ${class_type} ' id = data-${id + 1}>"${data[key]}"</span><span class="data-type" id="data-type-${id}">string</span></div>
-                                    </div>`);
+                    var data_element = $(`
+<div>
+    <div style = 'position: relative; margin-top: 2px; margin-bottom: 2px'>
+        <span class = 'key'>
+            ${key}
+        </span> 
+        : 
+        <span class = 'data data-inline ${class_type}' id = data-${id + 1}>
+            "${data[key]}"
+        </span>
+        <div class="data-type" style = 'position: absolute;top:0; right: calc(100% + 20px)' id="data-type-${id + 1}">
+            String
+        </div>
+
+        <div class="hidden" hidden_ = 'true' style = 'text-align: right; position: absolute; top:22; right: calc(100% + 20px); background: #5655ffcc; border-radius: 5px; padding: 5px; padding-left: 15px; z-index: 100000; color: white' id = data-types-${id + 1}>
+            <div id = 'type-string-${id + 1}' class = 'data-type-change'>String</div>
+            <div id = 'type-intdoub-${id + 1}' class = 'data-type-change'>Integer/Double</div>
+            <div id = 'type-boolean-${id + 1}' class = 'data-type-change'>Boolean</div>
+            <div id = 'type-array-${id + 1}' class = 'data-type-change'>Array</div>
+            <div id = 'type-timestamp-${id + 1}' class = 'data-type-change'>Timestamp</div>
+            <div id = 'type-date-${id + 1}' class = 'data-type-change'>Date</div>
+            <div id = 'type-objectid-${id + 1}' class = 'data-type-change'>Object ID</div>
+        </div>
+    </div>
+</div>`);
                 }else{
                     var data_element = $(`<div>
                                         <div><span class = 'key'>${key}</span> : <span class = 'data data-inline ${class_type} ' id = data-${id + 1}>${data[key]}</span><span class="data-type" id="data-type-${id}">string</span></div>
@@ -425,6 +472,59 @@ padding: 30px;
                 $(parent.find(".data")[0]).append(
                     data_element
                 );
+
+                $("#data-type-" + (id)).click(function(){
+                    console.log('click');
+                    var idx = getElementIndex($(this));
+                    var hidden = $('#data-types-' + idx).attr('hidden_');
+                    console.log(hidden);
+                    if (hidden == 'true'){
+                        $('#data-types-' + idx).removeClass("hidden");
+                        $('#data-types-' + idx).attr('hidden_', "false");
+                    }else{
+                        $('#data-types-' + idx).addClass("hidden");
+                        $('#data-types-' + idx).attr('hidden_', "true");
+                    }
+                })
+
+                $('#type-intdoub-' + (id)).click(function(){
+                    var idx = getElementIndex($(this))
+                    var data = $("#data-" + idx);
+
+                    if (data.hasClass("data-string")){
+                        // Remove the quotes
+                        data.html(data.text().trim().slice(1, -1));
+                    }
+
+                    data.attr('class', 'data data-inline');
+                    data.addClass('data-number'); 
+                })
+
+                $('#type-boolean-' + (id)).click(function(){
+                    var idx = getElementIndex($(this))
+                    var data = $("#data-" + idx);
+
+                    if (data.hasClass("data-string")){
+                        // Remove the quotes
+                        data.html(data.text().trim().slice(1, -1));
+                    }
+
+                    data.attr('class', 'data data-inline');
+                    data.addClass('data-bool'); 
+                })
+
+                $('#type-array-' + (id)).click(function(){
+                    var idx = getElementIndex($(this))
+                    var data = $("#data-" + idx);
+
+                    if (data.hasClass("data-string")){
+                        // Remove the quotes
+                        data.html(data.text().trim().slice(1, -1));
+                    }
+
+                    data.attr('class', 'data data-inline');
+                    data.addClass('data-bool'); 
+                })
             }
         } 
     }
@@ -464,7 +564,7 @@ padding: 30px;
         }
     }
 
-    function getDoc(element) {
+    function getElementIndex(element) {
         return element.attr('id').split('-').slice(-1)[0];
     }
 
@@ -486,7 +586,7 @@ padding: 30px;
         console.log(editing);
         var parent = $(this).parent();
 
-        var document = getDoc(parent);
+        var document = getElementIndex(parent);
 
         var keys = $('#parent-' + document).find('.key');
         var data = $('#parent-' + document).find('.data-inline');   // .data-inline because these are leaf data nodes, which should be the only editable type
