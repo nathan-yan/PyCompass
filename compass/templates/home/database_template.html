@@ -137,6 +137,8 @@ padding: 30px;
         font-weight: 700;
 
         font-size: 12px;
+
+        min-width: 20px;
     }
 
     .data {
@@ -149,6 +151,8 @@ padding: 30px;
 
         width: 100%; 
         word-wrap: break-word;
+
+        min-width: 20px;
 
     }
 
@@ -261,6 +265,19 @@ padding: 30px;
     .action-button {
         cursor: pointer;
     }
+
+    .data-type {
+        font-size: 10px;
+        padding: 2px 5px 2px 5px;
+        background: #8e53ec;
+
+        border-radius: 4px;
+        
+        color: white;
+        font-weight: 700;
+
+        margin-left: 15px;
+    }
 </style>
 
 <!--
@@ -274,7 +291,7 @@ padding: 30px;
             <div style = 'margin-left: 20%;' id = 'actions'>
                 <div class = 'button' style = 'background: #22d49f'>Insert Document</div>
                 <div id = 'refresh' class = 'button' style = 'background: #22aad4'><i class = 'material-icons' style = 'font-size: 20px; vertical-align: middle'>refresh</i></div>
-                <input class = 'fill-input' id = 'search' placeholder = 'filter by {field : value}'></input>
+                <input class = 'fill-input' id = 'search' style = 'font-family: Monospace' placeholder = 'filter by {field : value}'></input>
             </div>
 
             <br/>
@@ -395,11 +412,11 @@ padding: 30px;
                 
                 if (quotes){
                     var data_element = $(`<div>
-                                        <div><span class = 'key'>${key}</span> : <span class = 'data data-inline ${class_type} ' id = data-${id + 1}>"${data[key]}"</span></div>
+                                        <div><span class = 'key'>${key}</span> : <span class = 'data data-inline ${class_type} ' id = data-${id + 1}>"${data[key]}"</span><span class="data-type" id="data-type-${id}">string</span></div>
                                     </div>`);
                 }else{
                     var data_element = $(`<div>
-                                        <div><span class = 'key'>${key}</span> : <span class = 'data data-inline ${class_type} ' id = data-${id + 1}>${data[key]}</span></div>
+                                        <div><span class = 'key'>${key}</span> : <span class = 'data data-inline ${class_type} ' id = data-${id + 1}>${data[key]}</span><span class="data-type" id="data-type-${id}">string</span></div>
                                     </div>`);
                 }
                 
@@ -451,6 +468,19 @@ padding: 30px;
         return element.attr('id').split('-').slice(-1)[0];
     }
 
+    function isLastChild(element, layers){
+        layers = layers | 1;
+
+        var parent = element;
+        for (var l = 0; l < layers; l++){
+            parent = parent.parent();
+        }
+
+        console.log(element, parent.last());
+        return parent.children().last().is(element);
+
+    }
+
     $('body').on('click', '.edit-action', function() {
         var editing = $(this).attr("editing");
         console.log(editing);
@@ -459,6 +489,7 @@ padding: 30px;
         var document = getDoc(parent);
 
         var keys = $('#parent-' + document).find('.key');
+        var data = $('#parent-' + document).find('.data-inline');   // .data-inline because these are leaf data nodes, which should be the only editable type
 
         if (editing == 'false'){
             parent.parent().addClass("z-depth-3");
@@ -466,6 +497,11 @@ padding: 30px;
             for (var k = 0; k < keys.length; k++){
                // console.log(keys[k]);
                 $(keys[k]).attr('contentEditable', 'true');
+            }
+
+            for (var d = 0; d < data.length; d++){
+               // console.log(keys[k]);
+                $(data[d]).attr('contentEditable', 'true');
             }
 
             $(this).attr('editing', 'true');
@@ -478,9 +514,33 @@ padding: 30px;
                 $(keys[k]).attr('contentEditable', 'false');
             }
 
+            for (var d = 0; d < data.length; d++){
+               // console.log(keys[k]);
+                $(data[d]).attr('contentEditable', 'false');
+            }
+
             $(this).attr('editing', 'false');
         }
     });
+
+    $('body').on('keydown', '.data-inline', function(e){
+        // TODO: Check for tab, if is last child then append a new data element
+        
+        console.log(e);
+        if (e.keyCode == 9){
+            var isLast = isLastChild($(this).parent().parent());
+
+            if (isLast){
+                var key_element = $(`<div>
+                                        <div><span class="key" contenteditable="true"></span> : <span class="data data-inline data-number" id="data-${id}" contenteditable="true"></span><span class="data-type" id="data-type-${id}">string</span></div>
+                                    </div>`);
+                
+                id++;
+
+                $(this).parent().parent().parent().append(key_element);
+            }
+        }
+   })
 
     display_collection(document_);
 </script>
