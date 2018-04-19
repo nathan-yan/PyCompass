@@ -7,7 +7,8 @@ import json
 
 from . import application
 
-client = mc("mongodb://admin:SAeLZG66vynvQa5V@192.168.1.22:27017")
+#client = mc("mongodb://admin:@10.104.43.76:27017")
+client = mc("mongodb://admin:@recordbookcluster0-shard-00-00-l24me.mongodb.net:27017,recordbookcluster0-shard-00-01-l24me.mongodb.net:27017,recordbookcluster0-shard-00-02-l24me.mongodb.net:27017/test?ssl=true&replicaSet=RecordBookCluster0-shard-0&authSource=admin")
 
 @application.route("/")
 def show_auth():

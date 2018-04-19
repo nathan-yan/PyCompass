@@ -157,7 +157,7 @@ padding: 30px;
     }
 
     .data-inline {
-        padding-left: 5px;
+        padding-left: 0px;
     }
 
     .document {
@@ -211,7 +211,9 @@ padding: 30px;
         background: #3a3ad411;
 
         width: fit-content;
-        max-width: 100%
+        max-width: 100%;
+
+        margin-top: 5px;
     } 
 
     .document {
@@ -286,6 +288,24 @@ padding: 30px;
     cursor: pointer;
     text-decoration: underline; 
     }
+
+    [contenteditable][placeholder]:empty:before {
+        content: attr(placeholder);
+        color: #bababa;
+    }
+
+    .quotes::before { 
+        content: '"' !important;
+        color: #4a60df !important;
+    }
+
+    .quotes::after { 
+        content: '"';
+    }
+
+    .data-types-list {
+        text-align: right; position: absolute; top:14px; right: calc(100% + 45px); background: #5655ff; border-radius: 5px 0px 5px 5px; padding: 5px; padding-left: 15px; z-index: 100000; color: white
+    }
 </style>
 
 <!--
@@ -334,6 +354,41 @@ padding: 30px;
 </html>
 
 <script>
+    function default_string_factory(idx){
+       return  `
+        <div>
+            <div style = 'position: relative; margin-top: 2px; margin-bottom: 2px'>
+                <span class = 'key' contentEditable = 'true' placeholder = 'key'></span> 
+                : 
+                <span contentEditable = 'true' placeholder = 'value' class = 'data data-inline quotes data-string' id = data-${idx}></span>
+
+                <span class = 'add-field' style = 'position: absolute; top: 0; right: calc(100% + 30px);' id = 'add-field-${id + 1}'>
+            <i class = 'material-icons' style = 'color: #ccc; font-size: 12px; vertical-align: text-top'>add_circle</i>
+        </span>
+
+        <span class = 'delete-field' style = 'position: absolute; top: 0; right: calc(100% + 15px);' id = 'add-field-${id + 1}'>
+            <i class = 'material-icons' style = 'color: #fcc; font-size: 12px; vertical-align: text-top'>remove_circle</i>
+        </span>
+
+
+        <div class="data-type" style = 'position: absolute;top:0; right: calc(100% + 45px)' id="data-type-${id + 1}">
+            String
+        </div>
+
+                <div class="hidden data-types-list" hidden_ = 'true' style = '' id = data-types-${idx}>
+                    <div id = 'type-string-${idx}' class = 'data-type-change type-string'>String</div>
+                    <div id = 'type-intdoub-${idx}' class = 'data-type-change type-intdoub'>Integer/Double</div>
+                    <div id = 'type-boolean-${idx}' class = 'data-type-change type-boolean'>Boolean</div>
+                    <div id = 'type-array-${idx}' class = 'data-type-change type-array'>Array</div>
+                    <div id = 'type-object-${idx}' class = 'data-type-change type-object'>Object</div>
+                    <div id = 'type-timestamp-${idx}' class = 'data-type-change type-timestamp'>Timestamp</div>
+                    <div id = 'type-date-${idx}' class = 'data-type-change type-date'>Date</div>
+                    <div id = 'type-objectid-${idx}' class = 'data-type-change type-objectid'>Object ID</div>
+                </div>
+            </div>
+        </div>`;
+    }
+    
     $('#refresh').click(function(){
         window.location.reload();
     });
@@ -351,49 +406,70 @@ padding: 30px;
 
 
     function parseObject(parent, data){
-        console.log(id);
         for (var key in data) {
-            console.log(key + " " + data[key]);
             if (typeof data[key] == "object" && !Array.isArray(data[key])){
                 var recursive_element = $(`<div>
-                                                <div style = 'margin-bottom: 5px;'><span class = 'key'>${key}</span> : <span class = 'data-object' id = 'activates-${id + 1}'>Object</span></div>
+                                                <div style = 'position: relative; margin-top: 2px; margin-bottom: 5px;'><span class = 'key'>${key}</span> : <span class = 'activates data-object' id = 'activates-${id + 1}'>Object</span>
                                                 <div class = 'data data-in-object hidden' style = 'margin-bottom: 5px' id = data-${id + 1}></div>
-                                           </div>`);
+
+                                                 <span class = 'add-field' style = 'position: absolute; top: 0; right: calc(100% + 30px);' id = 'add-field-${id + 1}'>
+            <i class = 'material-icons' style = 'color: #ccc; font-size: 12px; vertical-align: text-top'>add_circle</i>
+        </span>
+
+        <span class = 'delete-field' style = 'position: absolute; top: 0; right: calc(100% + 15px);' id = 'add-field-${id + 1}'>
+            <i class = 'material-icons' style = 'color: #fcc; font-size: 12px; vertical-align: text-top'>remove_circle</i>
+        </span>
+
+
+        <div class="data-type" style = 'position: absolute;top:0; right: calc(100% + 45px)' id="data-type-${id + 1}">
+            Object
+        </div>
+
+                        <div class="hidden data-types-list" hidden_ = 'true' style = '' id = data-types-${id + 1}>
+                                <div id = 'type-string-${id + 1}' class = 'data-type-change type-string'>String</div>
+                                <div id = 'type-intdoub-${id + 1}' class = 'data-type-change type-intdoub'>Integer/Double</div>
+                                <div id = 'type-boolean-${id + 1}' class = 'data-type-change type-boolean'>Boolean</div>
+                                <div id = 'type-array-${id + 1}' class = 'data-type-change type-array'>Array</div>
+                                <div id = 'type-object-${id + 1}' class = 'data-type-change type-object'>Object</div>
+                                <div id = 'type-timestamp-${id + 1}' class = 'data-type-change type-timestamp'>Timestamp</div>
+                                <div id = 'type-date-${id + 1}' class = 'data-type-change type-date'>Date</div>
+                                <div id = 'type-objectid-${id + 1}' class = 'data-type-change type-objectid'>Object ID</div>
+                        </div>
+                                         </div></div>`);
                 
                 $(parent.find(".data")[0]).append(
                     recursive_element
                 );
 
-                $('#activates-' + (id + 1)).click(function(){
-                    var object_id = $(this).attr('id').split('-').slice(-1)[0];
-                    console.log(object_id);
-                    var object = $('#data-' + object_id);
-
-                    if (object.hasClass('hidden')){
-                        object.removeClass('hidden');
-                    }else{
-                        object.addClass('hidden');
-                    }
-                })
-                
+               
                 id += 1;
                 parseObject(recursive_element, data[key], id);
             }else if (Array.isArray(data[key])){
                 var array_element = $(`<div>
-                                                <div style = 'position: relative; margin-top: 2px; margin-bottom: 5px;'><span class = 'key'>${key}</span> : <span class = 'data-array' id = 'activates-${id + 1}'>Array (${data[key].length})</span>
+                                                <div style = 'position: relative; margin-top: 2px; margin-bottom: 5px;'><span class = 'key'>${key}</span> : <span class = 'activates data-array' id = 'activates-${id + 1}'>Array (${data[key].length})</span>
                                                 
-                                                <div class="data-type" style = 'position: absolute;top:0; right: calc(100% + 20px)' id="data-type-${id + 1}">
+                                                    <span class = 'add-field' style = 'position: absolute; top: 0; right: calc(100% + 30px);' id = 'add-field-${id + 1}'>
+            <i class = 'material-icons' style = 'color: #ccc; font-size: 12px; vertical-align: text-top'>add_circle</i>
+        </span>
+
+        <span class = 'delete-field' style = 'position: absolute; top: 0; right: calc(100% + 15px);' id = 'add-field-${id + 1}'>
+            <i class = 'material-icons' style = 'color: #fcc; font-size: 12px; vertical-align: text-top'>remove_circle</i>
+        </span>
+
+
+        <div class="data-type" style = 'position: absolute;top:0; right: calc(100% + 45px)' id="data-type-${id + 1}">
             Array
         </div>
 
-        <div class="hidden" hidden_ = 'true' style = 'text-align: right; position: absolute; top:22; right: calc(100% + 20px); background: #5655ffcc; border-radius: 5px; padding: 5px; padding-left: 15px; z-index: 100000; color: white' id = data-types-${id + 1}>
-            <div id = 'type-string-${id + 1}' class = 'data-type-change'>String</div>
-            <div id = 'type-intdoub-${id + 1}' class = 'data-type-change'>Integer/Double</div>
-            <div id = 'type-boolean-${id + 1}' class = 'data-type-change'>Boolean</div>
-            <div id = 'type-array-${id + 1}' class = 'data-type-change'>Array</div>
-            <div id = 'type-timestamp-${id + 1}' class = 'data-type-change'>Timestamp</div>
-            <div id = 'type-date-${id + 1}' class = 'data-type-change'>Date</div>
-            <div id = 'type-objectid-${id + 1}' class = 'data-type-change'>Object ID</div>
+        <div class="hidden data-types-list" hidden_ = 'true' style = '' id = data-types-${id + 1}>
+                <div id = 'type-string-${id + 1}' class = 'data-type-change type-string'>String</div>
+                                <div id = 'type-intdoub-${id + 1}' class = 'data-type-change type-intdoub'>Integer/Double</div>
+                                <div id = 'type-boolean-${id + 1}' class = 'data-type-change type-boolean'>Boolean</div>
+                                <div id = 'type-array-${id + 1}' class = 'data-type-change type-array'>Array</div>
+                                <div id = 'type-object-${id + 1}' class = 'data-type-change type-object'>Object</div>
+                                <div id = 'type-timestamp-${id + 1}' class = 'data-type-change type-timestamp'>Timestamp</div>
+                                <div id = 'type-date-${id + 1}' class = 'data-type-change type-date'>Date</div>
+                                <div id = 'type-objectid-${id + 1}' class = 'data-type-change type-objectid'>Object ID</div>
         </div>
                                                 </div>
                                                 <div class = 'data data-in-object hidden' style = 'margin-bottom: 5px' id = data-${id + 1}>
@@ -405,17 +481,7 @@ padding: 30px;
                     array_element
                 );
 
-                $('#activates-' + (id + 1)).click(function(){
-                    var object_id = $(this).attr('id').split('-').slice(-1)[0];
-                    console.log(object_id);
-                    var object = $('#data-' + object_id);
-
-                    if (object.hasClass('hidden')){
-                        object.removeClass('hidden');
-                    }else{
-                        object.addClass('hidden');
-                    }
-                })
+               
 
                 id += 1
 
@@ -423,108 +489,57 @@ padding: 30px;
 
             }else {
                 var class_type;
-                var quotes = true;
+                var quotes = '';
                 if (typeof data[key] == 'string'){
                     class_type = 'data-string';
+                    quotes = 'quotes';
                 }else if (typeof data[key] == 'boolean'){
                     class_type = 'data-bool';
-                    quotes = false;
                 }else if (typeof data[key] == 'number'){
                     class_type = 'data-number';
-                    quotes = false;
                 }
 
                 
-                if (quotes){
                     var data_element = $(`
 <div>
     <div style = 'position: relative; margin-top: 2px; margin-bottom: 2px'>
-        <span class = 'key'>
-            ${key}
-        </span> 
+        <span class = 'key'>${key}</span> 
         : 
-        <span class = 'data data-inline ${class_type}' id = data-${id + 1}>
-            "${data[key]}"
+        <span class = 'data ${quotes} data-inline ${class_type}' id = data-${id + 1}>${data[key]}</span>
+
+        <span class = 'add-field' style = 'position: absolute; top: 0; right: calc(100% + 30px);' id = 'add-field-${id + 1}'>
+            <i class = 'material-icons' style = 'color: #ccc; font-size: 12px; vertical-align: text-top'>add_circle</i>
         </span>
-        <div class="data-type" style = 'position: absolute;top:0; right: calc(100% + 20px)' id="data-type-${id + 1}">
+
+        <span class = 'delete-field' style = 'position: absolute; top: 0; right: calc(100% + 15px);' id = 'add-field-${id + 1}'>
+            <i class = 'material-icons' style = 'color: #fcc; font-size: 12px; vertical-align: text-top'>remove_circle</i>
+        </span>
+
+
+        <div class="data-type" style = 'position: absolute;top:0; right: calc(100% + 45px)' id="data-type-${id + 1}">
             String
         </div>
 
-        <div class="hidden" hidden_ = 'true' style = 'text-align: right; position: absolute; top:22; right: calc(100% + 20px); background: #5655ffcc; border-radius: 5px; padding: 5px; padding-left: 15px; z-index: 100000; color: white' id = data-types-${id + 1}>
-            <div id = 'type-string-${id + 1}' class = 'data-type-change'>String</div>
-            <div id = 'type-intdoub-${id + 1}' class = 'data-type-change'>Integer/Double</div>
-            <div id = 'type-boolean-${id + 1}' class = 'data-type-change'>Boolean</div>
-            <div id = 'type-array-${id + 1}' class = 'data-type-change'>Array</div>
-            <div id = 'type-timestamp-${id + 1}' class = 'data-type-change'>Timestamp</div>
-            <div id = 'type-date-${id + 1}' class = 'data-type-change'>Date</div>
-            <div id = 'type-objectid-${id + 1}' class = 'data-type-change'>Object ID</div>
+        <div class="hidden data-types-list" hidden_ = 'true' style = '' id = data-types-${id + 1}>
+                <div id = 'type-string-${id + 1}' class = 'data-type-change type-string'>String</div>
+                                <div id = 'type-intdoub-${id + 1}' class = 'data-type-change type-intdoub'>Integer/Double</div>
+                                <div id = 'type-boolean-${id + 1}' class = 'data-type-change type-boolean'>Boolean</div>
+                                <div id = 'type-array-${id + 1}' class = 'data-type-change type-array'>Array</div>
+                                <div id = 'type-object-${id + 1}' class = 'data-type-change type-object'>Object</div>
+                                <div id = 'type-timestamp-${id + 1}' class = 'data-type-change type-timestamp'>Timestamp</div>
+                                <div id = 'type-date-${id + 1}' class = 'data-type-change type-date'>Date</div>
+                                <div id = 'type-objectid-${id + 1}' class = 'data-type-change type-objectid'>Object ID</div>
         </div>
     </div>
 </div>`);
-                }else{
-                    var data_element = $(`<div>
-                                        <div><span class = 'key'>${key}</span> : <span class = 'data data-inline ${class_type} ' id = data-${id + 1}>${data[key]}</span><span class="data-type" id="data-type-${id}">string</span></div>
-                                    </div>`);
-                }
-                
+               
                 id += 1;
 
                 $(parent.find(".data")[0]).append(
                     data_element
                 );
 
-                $("#data-type-" + (id)).click(function(){
-                    console.log('click');
-                    var idx = getElementIndex($(this));
-                    var hidden = $('#data-types-' + idx).attr('hidden_');
-                    console.log(hidden);
-                    if (hidden == 'true'){
-                        $('#data-types-' + idx).removeClass("hidden");
-                        $('#data-types-' + idx).attr('hidden_', "false");
-                    }else{
-                        $('#data-types-' + idx).addClass("hidden");
-                        $('#data-types-' + idx).attr('hidden_', "true");
-                    }
-                })
-
-                $('#type-intdoub-' + (id)).click(function(){
-                    var idx = getElementIndex($(this))
-                    var data = $("#data-" + idx);
-
-                    if (data.hasClass("data-string")){
-                        // Remove the quotes
-                        data.html(data.text().trim().slice(1, -1));
-                    }
-
-                    data.attr('class', 'data data-inline');
-                    data.addClass('data-number'); 
-                })
-
-                $('#type-boolean-' + (id)).click(function(){
-                    var idx = getElementIndex($(this))
-                    var data = $("#data-" + idx);
-
-                    if (data.hasClass("data-string")){
-                        // Remove the quotes
-                        data.html(data.text().trim().slice(1, -1));
-                    }
-
-                    data.attr('class', 'data data-inline');
-                    data.addClass('data-bool'); 
-                })
-
-                $('#type-array-' + (id)).click(function(){
-                    var idx = getElementIndex($(this))
-                    var data = $("#data-" + idx);
-
-                    if (data.hasClass("data-string")){
-                        // Remove the quotes
-                        data.html(data.text().trim().slice(1, -1));
-                    }
-
-                    data.attr('class', 'data data-inline');
-                    data.addClass('data-bool'); 
-                })
+               
             }
         } 
     }
@@ -576,10 +591,106 @@ padding: 30px;
             parent = parent.parent();
         }
 
-        console.log(element, parent.last());
         return parent.children().last().is(element);
 
     }
+
+    $('body').on('click', '.activates', function(){
+        var idx = getElementIndex($(this));
+        var object = $('#data-' + idx);
+
+        if (object.hasClass('hidden')){
+            object.removeClass('hidden');
+        }else{
+            object.addClass('hidden');
+        }
+    })
+        
+
+    $('body').on('click', '.add-field', function(){
+        var data_element_this_belongs_to = $(this).parent().parent();
+
+        var idx = getElementIndex($(this));
+        var data_element = $(default_string_factory(id + 1));
+
+        id ++;
+
+    data_element.insertAfter(data_element_this_belongs_to);
+    });
+
+    $('body').on('click', '.data-type-change', function(){
+        var idx = getElementIndex($(this))
+        var data = $("#data-" + idx);
+
+        // Just always remove quotes, if it is a string then we'll add it back anyway
+        if (data.hasClass("data-string")){
+            // Remove the quotes
+            data.removeClass('quotes');
+        }
+
+        // Get rid of the array element
+        if (data.hasClass("data-in-object")){
+            // Basically what we're doing is getting what was the data element before, transforming it to a real data element, then deleting the original in-object data element
+            var should_be_data = $("#activates-" + idx); 
+            should_be_data.attr('class', 'data data-inline');
+            should_be_data.attr('contentEditable', 'true');    
+            should_be_data.html('');
+
+            $(`#data-${idx}`).remove();
+            should_be_data.attr('id', `data-${idx}`);
+        }
+
+        if ($(this).hasClass("type-intdoub")){
+            data.attr('class', 'data data-inline');
+            data.addClass('data-number'); 
+        }else if ($(this).hasClass('type-string')){
+            data.attr('class', 'data data-inline quotes');
+            data.addClass('data-string'); 
+        }else if ($(this).hasClass('type-boolean')){
+            data.attr('class', 'data data-inline');
+            data.addClass('data-boolean'); 
+        }else if ($(this).hasClass('type-array')){
+            data.attr('class', 'data-array activates');
+            data.attr('id', 'activates-' + idx);
+
+            data.html("Array (0)");
+
+            data.parent().parent().append($(`<div class = 'data data-in-object hidden' style = 'margin-bottom: 5px' id = 'data-${idx}'>
+                ${default_string_factory(id + 1)}
+            </div>`))       // We use id + 1 because we're adding a default field and as a result it's a completely new element
+
+            id ++;
+        }
+    });
+
+   
+
+    $('body').on('click', '.data-type', function(){
+        var idx = getElementIndex($(this));
+        $(this).toggleClass('z-depth-3');
+        
+        var hidden = $('#data-types-' + idx).attr('hidden_');
+        $('#data-types-' + idx).toggleClass('z-depth-3');
+        console.log(hidden);
+        if (hidden == 'true'){
+            $('#data-types-' + idx).removeClass("hidden");
+            $('#data-types-' + idx).attr('hidden_', "false");
+            $(this).css('background', '#5655ff');
+        }else{
+            $('#data-types-' + idx).addClass("hidden");
+            $('#data-types-' + idx).attr('hidden_', "true");
+            $(this).css('background', '#8e53ec');
+        }
+    })
+
+   
+
+            
+                // <span class = 'data-array' id = 'activates-${id + 1}'>Array (${data[key].length})</span>
+                // <div class = 'data data-in-object hidden' style = 'margin-bottom: 5px' id = data-${id + 1}>
+                                                
+                //</div>
+
 
     $('body').on('click', '.edit-action', function() {
         var editing = $(this).attr("editing");
@@ -597,11 +708,13 @@ padding: 30px;
             for (var k = 0; k < keys.length; k++){
                // console.log(keys[k]);
                 $(keys[k]).attr('contentEditable', 'true');
+                $(keys[k]).attr('placeholder', 'key');
             }
 
             for (var d = 0; d < data.length; d++){
                // console.log(keys[k]);
                 $(data[d]).attr('contentEditable', 'true');
+                $(data[d]).attr('placeholder', 'value');
             }
 
             $(this).attr('editing', 'true');
@@ -631,9 +744,7 @@ padding: 30px;
             var isLast = isLastChild($(this).parent().parent());
 
             if (isLast){
-                var key_element = $(`<div>
-                                        <div><span class="key" contenteditable="true"></span> : <span class="data data-inline data-number" id="data-${id}" contenteditable="true"></span><span class="data-type" id="data-type-${id}">string</span></div>
-                                    </div>`);
+                var key_element = $(default_string_factory(id + 1));
                 
                 id++;
 
